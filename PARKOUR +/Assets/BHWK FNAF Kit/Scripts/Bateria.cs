@@ -50,7 +50,7 @@ public class Bateria : MonoBehaviour
 
     IEnumerator IniciarContador()
     {
-        yield return new WaitForSeconds(5.6f);
+        yield return new WaitForSeconds(5.7f);
         quantidade = quantidade - multiplicadorNivel;
         StartCoroutine(IniciarContador());
     }

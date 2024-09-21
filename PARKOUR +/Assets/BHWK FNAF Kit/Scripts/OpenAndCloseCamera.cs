@@ -11,6 +11,7 @@ public class OpenAndCloseCamera : MonoBehaviour, IPointerEnterHandler
     public bool isOpen = false;
     private Bateria b;
     public AudioSource AudioS;
+    private bool canActivate = true;
     private void Start()
     {
         b = FindObjectOfType<Bateria>();
@@ -18,27 +19,35 @@ public class OpenAndCloseCamera : MonoBehaviour, IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        AudioS.Play();
-        StartCoroutine(IniciarCam());
+        
+        if (canActivate)
+        {
+            AudioS.Play();
+            StartCoroutine(IniciarCam());
+        }
     }
 
     IEnumerator IniciarCam()
     {
         if(isOpen == false)
         {
+            canActivate = false;
             animCam.SetBool("Abrir", true);
             yield return new WaitForSeconds(TempoDeTransicão);
-            camObj.SetActive(true);
             isOpen = true;
+            camObj.SetActive(true);
             b.multiplicadorNivel++;
+            canActivate = true;
         }
         else
         {
+            canActivate = false;
             animCam.SetBool("Abrir", false);
             yield return new WaitForSeconds(TempoDeTransicão);
-            camObj.SetActive(false);
             isOpen = false;
+            camObj.SetActive(false);
             b.multiplicadorNivel--;
+            canActivate = true;
         }
     }
 }
