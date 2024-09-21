@@ -1,21 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class OpenAndCloseCamera : MonoBehaviour
+public class OpenAndCloseCamera : MonoBehaviour, IPointerEnterHandler
 {
     public GameObject camObj;
     public float TempoDeTransicão = 1f;
     public Animator animCam;
     public bool isOpen = false;
-    public Bateria b;
-
+    private Bateria b;
+    public AudioSource AudioS;
     private void Start()
     {
         b = FindObjectOfType<Bateria>();
     }
-    public void Abrir()
+
+    public void OnPointerEnter(PointerEventData eventData)
     {
+        AudioS.Play();
         StartCoroutine(IniciarCam());
     }
 

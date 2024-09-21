@@ -585,7 +585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7029021507333681678, guid: ccf98588aba97b449a5382d66c2ca12b, type: 3}
       propertyPath: VelocidadeDaNoite1
-      value: 61
+      value: 73
       objectReference: {fileID: 0}
     - target: {fileID: 7029021507333681678, guid: ccf98588aba97b449a5382d66c2ca12b, type: 3}
       propertyPath: VelocidadeDaNoite2
