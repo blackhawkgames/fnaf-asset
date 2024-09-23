@@ -45,7 +45,7 @@ public class EnemyPositions : MonoBehaviour
 
     private void Update()
     {
-        if(iniciar == true)
+        if(iniciar == true && startingAttack == false)
         {
             events[currentPositionIndex].SetActive(true);
         }
@@ -102,8 +102,11 @@ public class EnemyPositions : MonoBehaviour
     IEnumerator StartAttack()
     {
         yield return new WaitForSeconds(gm.velocidade);
-        events[currentPositionIndex].SetActive(false);
-        events[lastPos].SetActive(false);
+        foreach (GameObject obj in events)
+        {
+            // Exemplo: Ativar todos os objetos na lista
+            obj.SetActive(false);
+        }
         startingAttack = true;
         Attack();
     }
