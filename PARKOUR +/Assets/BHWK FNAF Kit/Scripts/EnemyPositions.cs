@@ -16,6 +16,9 @@ public class EnemyPositions : MonoBehaviour
     public GameObject jumpscare;
     public GameObject telapreta;
     public GameObject transicoes;
+    public List<GameObject> events;
+
+
 
     [Header("Tempo Pra Dar Um Giro")]
     public float tempoParaInicio;
@@ -26,10 +29,11 @@ public class EnemyPositions : MonoBehaviour
     [Header("TEMPOS PARA ATACAR")]
     public float tempoMinimo = 5.5f;
     public float tempoMaximo = 10.5f;
-
+    private int lastPos;
     private int currentPositionIndex = 0;
     private bool stopMoving = false;
     private bool startingAttack = false;
+    private bool iniciar = false;
     private GameManager gm;
 
     void Start()
@@ -41,6 +45,11 @@ public class EnemyPositions : MonoBehaviour
 
     private void Update()
     {
+        if(iniciar == true)
+        {
+            events[currentPositionIndex].SetActive(true);
+        }
+        
         if (ls.lightObj.activeSelf == true && startingAttack == true)
         {
             enemyDoor.SetActive(true);
@@ -49,17 +58,19 @@ public class EnemyPositions : MonoBehaviour
         {
             enemyDoor.SetActive(false);
         }
+
     }
 
     IEnumerator RandomizePosition()
     {
         yield return new WaitForSeconds(tempoParaInicio);
+        iniciar = true;
+        objectToMove.SetActive(false);
         while (!stopMoving)
         {
             if (currentPositionIndex < posicaoLimiteInicio)
             {
                 // Randomiza entre as posições 0 a 3
-                
                 currentPositionIndex = Random.Range(0, posicaoLimiteInicio + 1);
                 StartCoroutine(transicao());
             }
@@ -71,7 +82,8 @@ public class EnemyPositions : MonoBehaviour
             }
 
             // Move o objeto para a nova posição
-            objectToMove.transform.position = positions[currentPositionIndex].position;
+            events[lastPos].SetActive(false);
+            events[currentPositionIndex].transform.position = positions[currentPositionIndex].position;
 
             // Se chegar à posição 5, para a randomização
             if (currentPositionIndex == posicaoLimite)
@@ -80,15 +92,18 @@ public class EnemyPositions : MonoBehaviour
                 StartCoroutine(StartAttack());
             }
 
+            lastPos = currentPositionIndex;
             // Espera pelo intervalo antes de mudar de posição novamente
             yield return new WaitForSeconds(gm.velocidade);
         }
+
     }
 
     IEnumerator StartAttack()
     {
         yield return new WaitForSeconds(gm.velocidade);
-        objectToMove.SetActive(false);
+        events[currentPositionIndex].SetActive(false);
+        events[lastPos].SetActive(false);
         startingAttack = true;
         Attack();
     }
@@ -108,7 +123,7 @@ public class EnemyPositions : MonoBehaviour
             stopMoving = false;
             StartCoroutine(RandomizePosition());
             playAvisoTchau.Play();
-            objectToMove.SetActive(true);
+            events[currentPositionIndex].SetActive(true);
         }
         else
         {
