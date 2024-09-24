@@ -66,18 +66,29 @@ public class EnemyPositions : MonoBehaviour
         yield return new WaitForSeconds(tempoParaInicio);
         iniciar = true;
         objectToMove.SetActive(false);
+
+        int secondLastPos = -1; // Variável para armazenar a penúltima posição
+
         while (!stopMoving)
         {
             if (currentPositionIndex < posicaoLimiteInicio)
             {
-                // Randomiza entre as posições 0 a 3
-                currentPositionIndex = Random.Range(0, posicaoLimiteInicio + 1);
+                // Randomiza entre as posições 0 a 3, garantindo que a posição não seja igual a lastPos ou secondLastPos
+                do
+                {
+                    currentPositionIndex = Random.Range(0, posicaoLimiteInicio + 1);
+                } while (currentPositionIndex == lastPos || currentPositionIndex == secondLastPos);
+
                 StartCoroutine(transicao());
             }
             else if (currentPositionIndex >= posicaoLimiteInicio && currentPositionIndex < posicaoLimite)
             {
-                // Randomiza entre as posições 4 a 5
-                currentPositionIndex = Random.Range(posicaoLimiteInicio + 1, posicaoLimite + 1);
+                // Randomiza entre as posições 4 a 5, garantindo que a posição não seja igual a lastPos ou secondLastPos
+                do
+                {
+                    currentPositionIndex = Random.Range(posicaoLimiteInicio + 1, posicaoLimite + 1);
+                } while (currentPositionIndex == lastPos || currentPositionIndex == secondLastPos);
+
                 StartCoroutine(transicao());
             }
 
@@ -92,12 +103,15 @@ public class EnemyPositions : MonoBehaviour
                 StartCoroutine(StartAttack());
             }
 
+            // Atualiza secondLastPos antes de lastPos
+            secondLastPos = lastPos;
             lastPos = currentPositionIndex;
+
             // Espera pelo intervalo antes de mudar de posição novamente
             yield return new WaitForSeconds(gm.velocidade);
         }
-
     }
+
 
     IEnumerator StartAttack()
     {
