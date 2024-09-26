@@ -15,6 +15,9 @@ public class FoxyStyleEnemy : MonoBehaviour
     public GameObject jumpscare;
     public GameObject telapreta;
     public GameObject transicoes;
+    public GameObject camObj;
+    public GameObject camAnim;
+    public List<GameObject> events;
 
     [Header("Tempo Pra Dar Um Giro")]
     public float tempoParaInicio;
@@ -25,6 +28,9 @@ public class FoxyStyleEnemy : MonoBehaviour
     [Header("TEMPOS PARA MOVIMENTAR")]
     public float tempoMinimoMove = 5.5f;
     public float tempoMaximoMove = 12f;
+    private int lastPos;
+    private bool iniciar = false;
+    private bool startingAttack = false;
 
 
     private int currentPositionIndex = 0;
@@ -33,17 +39,28 @@ public class FoxyStyleEnemy : MonoBehaviour
     void Start()
     {
         StartCoroutine(RandomizePosition());
+        
+    }
+    private void Update()
+    {
+        if (iniciar == true && startingAttack == false)
+        {
+            events[currentPositionIndex].SetActive(true);
+        }
     }
 
     IEnumerator RandomizePosition()
     {
         yield return new WaitForSeconds(tempoParaInicio);
+        iniciar = true;
+        objectToMove.SetActive(false);
         while (!stopMoving)
         {
             currentPositionIndex++;
             StartCoroutine(transicao());
             // Move o objeto para a nova posição
-            objectToMove.transform.position = positions[currentPositionIndex].position;
+            events[lastPos].SetActive(false);
+            events[currentPositionIndex].transform.position = positions[currentPositionIndex].position;
 
             // Se chegar à posição 5, para a randomização
             if (currentPositionIndex == posicaoLimite)
@@ -53,6 +70,7 @@ public class FoxyStyleEnemy : MonoBehaviour
                 StartCoroutine(StartAttack());
             }
 
+            lastPos = currentPositionIndex;
             // Espera pelo intervalo antes de mudar de posição novamente
             yield return new WaitForSeconds(Random.Range(tempoMinimoMove, tempoMaximoMove));
         }
@@ -61,7 +79,12 @@ public class FoxyStyleEnemy : MonoBehaviour
     IEnumerator StartAttack()
     {
         yield return new WaitForSeconds(Random.Range(tempoMinimoMove, tempoMaximoMove));
-        objectToMove.SetActive(false);
+        foreach (GameObject obj in events)
+        {
+            // Exemplo: Ativar todos os objetos na lista
+            obj.SetActive(false);
+        }
+        startingAttack = true;
         Attack();
     }
     void Attack()
@@ -76,12 +99,13 @@ public class FoxyStyleEnemy : MonoBehaviour
         yield return new WaitForSeconds(tempoDeCorrida);
         if(dc.isOpen == false)
         {
+            startingAttack = false;
             currentPositionIndex = 0;
             stopMoving = false;
             StartCoroutine(RandomizePosition());
             playAvisoTchau.Play();
             enemyDoor.SetActive(false);
-            objectToMove.SetActive(true);
+            events[currentPositionIndex].SetActive(true);
         }
         else
         {
@@ -93,6 +117,8 @@ public class FoxyStyleEnemy : MonoBehaviour
         enemyDoor.SetActive(false);
         wm.enabled = false;
         HUD.SetActive(false);
+        camObj.SetActive(false);
+        camAnim.SetActive(false);
         StartCoroutine(KillCount());
     }
 

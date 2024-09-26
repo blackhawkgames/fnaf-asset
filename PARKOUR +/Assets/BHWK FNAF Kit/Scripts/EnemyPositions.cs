@@ -15,6 +15,8 @@ public class EnemyPositions : MonoBehaviour
     public GameObject HUD;
     public GameObject jumpscare;
     public GameObject telapreta;
+    public GameObject camAnim;
+    public GameObject camObj;
     public GameObject transicoes;
     public List<GameObject> events;
 
@@ -151,6 +153,8 @@ public class EnemyPositions : MonoBehaviour
     {
         wm.enabled = false;
         HUD.SetActive(false);
+        camObj.SetActive(false);
+        camAnim.SetActive(false);
         StartCoroutine(KillCount());
     }
 
