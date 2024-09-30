@@ -16,6 +16,20 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public float velocidade;
     public static GameObject instance;
+
+    public void Awake()
+    {
+        PlayerData data = SaveSystem.LoadPlayer();
+        if (data != null)
+        {
+            NoiteAtual = data.level;
+        }
+        else
+        {
+            NoiteAtual = 1;
+        }
+    }
+
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
@@ -24,15 +38,7 @@ public class GameManager : MonoBehaviour
             instance = gameObject;
         else
             Destroy(gameObject);
-        PlayerData data = SaveSystem.LoadPlayer();
-        if(data != null)
-        {
-            NoiteAtual = data.level;
-        }
-        else
-        {
-            NoiteAtual = 1;
-        }
+        
     }
 
     private void Update()
